@@ -40,28 +40,9 @@ jobs:
             azd config set defaults.subscription ${{ parameters.subscriptionId }}
             azd config set defaults.location ${{ parameters.location }}
 
-            environmentName="sdkazdhook$(uuidgen | cut -c 1-6)"
+            environmentName="Sdk-AzdHook-$(uuidgen | cut -c 1-6)"
             azd init -e $environmentName
 
-      - task: Bash@3
-        displayName: Replace azure.yaml file
-        inputs:
-          targetType: inline
-          script: |
-
-
-            yamlFile=$(cat ./hooks/1.ps1 )
-            echo $yamlFile > 2.txt
-
-            cat 2.txt
-            
-            path1="./hooks"
-            yamlFile2=$(cat $path1/1.ps1 )
-            echo $yamlFile2 >> 2.txt
-
-            cat 2.txt
-            chmod +x ./hooks/1.sh
-            ./hooks/1.sh 1111 2222
 
       - task: AzureCLI@2
         displayName: Run azd hooks
@@ -71,19 +52,9 @@ jobs:
           scriptLocation: inlineScript
           inlineScript: |
 
-
-            chmod +x ./hooks/1.sh
+            chmod -R +x ./hooks/
 
             azd up --no-prompt
-            
-            # test
-            # azd package 
-            # azd restore
-
-            sleep 10
 
             azd down --purge --force
-
-
-            popd
 

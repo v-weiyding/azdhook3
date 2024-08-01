@@ -23,8 +23,8 @@ hooks:
     posix:
       shell: sh
       run: |
-        echo "AZD HOOK LOG : preup ================="
-        echo "AZD HOOK LOG : AZURE_ENV_NAME $AZURE_ENV_NAME "
+        echo -e "\n AZD HOOK LOG : preup ================="
+        echo -e " AZD HOOK LOG : AZURE_ENV_NAME $AZURE_ENV_NAME \n"
       interactive: true
       continueOnError: false
   postup: # test Interactive set false
@@ -51,8 +51,8 @@ hooks:
     posix:
       shell: sh
       run: |
-        echo "AZD HOOK LOG : preprovision ================="
-        echo "AZD HOOK LOG : AZURE_ENV_NAME $AZURE_ENV_NAME "
+        echo -e "\n AZD HOOK LOG : preprovision ================="
+        echo -e " AZD HOOK LOG : AZURE_ENV_NAME $AZURE_ENV_NAME \n"
       interactive: true
       continueOnError: false
   postprovision:
@@ -82,9 +82,9 @@ hooks:
     posix:
       shell: sh
       run: |
-        echo "AZD HOOK LOG : prepackage ================="
-        echo "AZD HOOK LOG : AZURE_ENV_NAME $AZURE_ENV_NAME "
-        echo "test continueOnError "
+        echo -e "\n AZD HOOK LOG : prepackage ================="
+        echo -e " AZD HOOK LOG : AZURE_ENV_NAME $AZURE_ENV_NAME"
+        echo -e " AZD HOOK LOG : test continueOnError \n"
         ech
       interactive: true
       continueOnError: true
@@ -107,14 +107,14 @@ hooks:
       run: |
         Write-Output "AZD HOOK LOG : predeploy ================="
         Write-Output "AZD HOOK LOG : AZURE_ENV_NAME $env:AZURE_ENV_NAME "
-      interactive: false
+      interactive: true
       continueOnError: false
     posix:
       shell: sh
       run: |
-        echo "AZD HOOK LOG : predeploy ================="
-        echo "AZD HOOK LOG : AZURE_ENV_NAME $AZURE_ENV_NAME "
-      interactive: false
+        echo -e "\n AZD HOOK LOG : predeploy ================="
+        echo -e " AZD HOOK LOG : AZURE_ENV_NAME $AZURE_ENV_NAME \n"
+      interactive: true
       continueOnError: false
   postdeploy:
     windows:
@@ -143,9 +143,9 @@ hooks:
     posix:
       shell: sh
       run: |
-        echo "AZD HOOK LOG : prerestore ================="
-        echo "AZD HOOK LOG : AZURE_ENV_NAME $AZURE_ENV_NAME "
-        echo "test Invalid file paths "
+        echo -e "\n AZD HOOK LOG : prerestore ================="
+        echo -e " AZD HOOK LOG : AZURE_ENV_NAME $AZURE_ENV_NAME"
+        echo -e " AZD HOOK LOG : test Invalid file paths \n"
       interactive: true
       continueOnError: false
   postrestore:
@@ -176,14 +176,14 @@ hooks:
     windows:
       shell: pwsh
       run: |
-        Write-Output "AZD HOOK LOG : predown ================="
+        Write-Output "AZD HOOK LOG : postdown ================="
         Write-Output "AZD HOOK LOG : AZURE_ENV_NAME $env:AZURE_ENV_NAME "
       interactive: true
       continueOnError: false
     posix:
       shell: sh
       run: |
-        echo "AZD HOOK LOG : postdown ================="
-        echo "AZD HOOK LOG : AZURE_ENV_NAME $AZURE_ENV_NAME "
+        echo -e "\n AZD HOOK LOG : postdown ================="
+        echo -e " AZD HOOK LOG : AZURE_ENV_NAME $AZURE_ENV_NAME \n"
       interactive: true
       continueOnError: false
