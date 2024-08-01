@@ -23,8 +23,8 @@ hooks:
     posix:
       shell: sh
       run: |
-        echo -e "\n AZD HOOK LOG : preup ================="
-        echo -e " AZD HOOK LOG : AZURE_ENV_NAME $AZURE_ENV_NAME \n"
+        echo  "\n AZD HOOK LOG : preup ================="
+        echo  " AZD HOOK LOG : AZURE_ENV_NAME $AZURE_ENV_NAME \n"
       interactive: true
       continueOnError: false
   postup: # test Interactive set false
@@ -35,7 +35,7 @@ hooks:
       continueOnError: false
     posix:
       shell: sh
-      run: ./localFile/1.sh "postup error :test Interactive set false"
+      run: ./hooks/localFile.sh "postup error :test Interactive set false"
       interactive: false
       continueOnError: false
 
@@ -51,8 +51,8 @@ hooks:
     posix:
       shell: sh
       run: |
-        echo -e "\n AZD HOOK LOG : preprovision ================="
-        echo -e " AZD HOOK LOG : AZURE_ENV_NAME $AZURE_ENV_NAME \n"
+        echo  "\n AZD HOOK LOG : preprovision ================="
+        echo  " AZD HOOK LOG : AZURE_ENV_NAME $AZURE_ENV_NAME \n"
       interactive: true
       continueOnError: false
   postprovision:
@@ -63,7 +63,7 @@ hooks:
       continueOnError: false
     posix:
       shell: sh
-      run: ./localFile/1.sh postprovision
+      run: ./hooks/localFile.sh postprovision
       interactive: true
       continueOnError: false
 
@@ -82,9 +82,9 @@ hooks:
     posix:
       shell: sh
       run: |
-        echo -e "\n AZD HOOK LOG : prepackage ================="
-        echo -e " AZD HOOK LOG : AZURE_ENV_NAME $AZURE_ENV_NAME"
-        echo -e " AZD HOOK LOG : test continueOnError \n"
+        echo  "\n AZD HOOK LOG : prepackage ================="
+        echo  " AZD HOOK LOG : AZURE_ENV_NAME $AZURE_ENV_NAME"
+        echo  " AZD HOOK LOG : test continueOnError \n"
         ech
       interactive: true
       continueOnError: true
@@ -96,7 +96,7 @@ hooks:
       continueOnError: false
     posix:
       shell: sh
-      run: ./localFile/1.sh postpackage
+      run: ./hooks/localFile.sh postpackage
       interactive: true
       continueOnError: false
 
@@ -112,8 +112,8 @@ hooks:
     posix:
       shell: sh
       run: |
-        echo -e "\n AZD HOOK LOG : predeploy ================="
-        echo -e " AZD HOOK LOG : AZURE_ENV_NAME $AZURE_ENV_NAME \n"
+        echo  "\n AZD HOOK LOG : predeploy ================="
+        echo  " AZD HOOK LOG : AZURE_ENV_NAME $AZURE_ENV_NAME \n"
       interactive: true
       continueOnError: false
   postdeploy:
@@ -124,7 +124,7 @@ hooks:
       continueOnError: false
     posix:
       shell: sh
-      run: ./localFile/1.sh postdeploy
+      run: ./hooks/localFile.sh postdeploy
 
       interactive: true
       continueOnError: false
@@ -143,9 +143,9 @@ hooks:
     posix:
       shell: sh
       run: |
-        echo -e "\n AZD HOOK LOG : prerestore ================="
-        echo -e " AZD HOOK LOG : AZURE_ENV_NAME $AZURE_ENV_NAME"
-        echo -e " AZD HOOK LOG : test Invalid file paths \n"
+        echo  "\n AZD HOOK LOG : prerestore ================="
+        echo  " AZD HOOK LOG : AZURE_ENV_NAME $AZURE_ENV_NAME"
+        echo  " AZD HOOK LOG : test Invalid file paths \n"
       interactive: true
       continueOnError: false
   postrestore:
@@ -156,7 +156,7 @@ hooks:
       continueOnError: true
     posix:
       shell: sh
-      run: ./xxx/1.sh
+      run: ./xxx/localFile.sh
       interactive: true
       continueOnError: true
 
@@ -169,7 +169,7 @@ hooks:
       continueOnError: false
     posix:
       shell: sh
-      run: ./localFile/1.sh predown
+      run: ./hooks/localFile.sh predown
       interactive: true
       continueOnError: false
   postdown:
@@ -183,7 +183,7 @@ hooks:
     posix:
       shell: sh
       run: |
-        echo -e "\n AZD HOOK LOG : postdown ================="
-        echo -e " AZD HOOK LOG : AZURE_ENV_NAME $AZURE_ENV_NAME \n"
+        echo  "\n AZD HOOK LOG : postdown ================="
+        echo  " AZD HOOK LOG : AZURE_ENV_NAME $AZURE_ENV_NAME \n"
       interactive: true
       continueOnError: false
