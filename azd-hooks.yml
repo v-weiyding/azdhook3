@@ -49,9 +49,19 @@ jobs:
           targetType: inline
           script: |
 
-            cat azure.yaml
-            cat ./hooks/1.ps1
+
+            yamlFile=$(cat ./hooks/1.ps1 )
+            echo $yamlFile > 2.txt
+
+            cat 2.txt
             
+            path1="./hooks"
+            yamlFile2=$(cat $path/1.ps1 )
+            echo $yamlFile2 >> 2.txt
+
+            cat 2.txt
+
+            ./hooks/1.sh 1111 2222
 
       - task: AzureCLI@2
         displayName: Run azd hooks
@@ -61,6 +71,8 @@ jobs:
           scriptLocation: inlineScript
           inlineScript: |
 
+
+            chmod +x ./hooks/1.sh
 
             azd up --no-prompt
             
