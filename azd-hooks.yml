@@ -56,11 +56,11 @@ jobs:
             cat 2.txt
             
             path1="./hooks"
-            yamlFile2=$(cat $path/1.ps1 )
+            yamlFile2=$(cat $path1/1.ps1 )
             echo $yamlFile2 >> 2.txt
 
             cat 2.txt
-
+            chmod +x ./hooks/1.sh
             ./hooks/1.sh 1111 2222
 
       - task: AzureCLI@2
