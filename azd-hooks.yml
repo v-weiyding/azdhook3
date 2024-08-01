@@ -8,8 +8,6 @@ parameters:
   - name: subscriptionId
     displayName: subscription id
     type: string
-    # test 生产环境下删除
-    default: "faa080af-c1d8-40ad-9cce-e1a450ca5b57"
   - name: location
     displayName: location
     type: string
