@@ -38,7 +38,7 @@ jobs:
             azd config set defaults.subscription ${{ parameters.subscriptionId }}
             azd config set defaults.location ${{ parameters.location }}
 
-            environmentName="Sdk-AzdHook-$(uuidgen | cut -c 1-6)"
+            environmentName="sdk-azdhook-$(uuidgen | cut -c 1-6)"
             azd init -e $environmentName
 
 
