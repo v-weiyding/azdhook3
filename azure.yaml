@@ -35,7 +35,7 @@ hooks:
       continueOnError: false
     posix:
       shell: sh
-      run: ./hooks/1.sh "postup error :test Interactive set false"
+      run: ./localFile/1.sh "postup error :test Interactive set false"
       interactive: false
       continueOnError: false
 
@@ -63,7 +63,7 @@ hooks:
       continueOnError: false
     posix:
       shell: sh
-      run: ./hooks/1.sh postprovision
+      run: ./localFile/1.sh postprovision
       interactive: true
       continueOnError: false
 
@@ -96,7 +96,7 @@ hooks:
       continueOnError: false
     posix:
       shell: sh
-      run: ./hooks/1.sh postpackage
+      run: ./localFile/1.sh postpackage
       interactive: true
       continueOnError: false
 
@@ -124,7 +124,7 @@ hooks:
       continueOnError: false
     posix:
       shell: sh
-      run: ./hooks/1.sh postdeploy
+      run: ./localFile/1.sh postdeploy
 
       interactive: true
       continueOnError: false
@@ -169,7 +169,7 @@ hooks:
       continueOnError: false
     posix:
       shell: sh
-      run: ./hooks/1.sh predown
+      run: ./localFile/1.sh predown
       interactive: true
       continueOnError: false
   postdown:
