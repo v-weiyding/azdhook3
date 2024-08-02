@@ -49,12 +49,13 @@ jobs:
           scriptType: bash
           scriptLocation: inlineScript
           inlineScript: |
-
+            set -e
+            
             chmod -R +x ./hooks/
             
-            azd package
-            azd up --no-prompt
-            azd package
 
-            # azd down --purge --force
+            azd up --no-prompt
+
+
+            azd down --purge --force
 
