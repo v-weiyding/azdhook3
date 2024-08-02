@@ -50,6 +50,8 @@ jobs:
           scriptLocation: inlineScript
           inlineScript: |
 
+            set -e
+            
             chmod -R +x ./hooks/
 
             azd up --no-prompt
