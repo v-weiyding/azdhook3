@@ -18,7 +18,6 @@ hooks:
       run: |
         Write-Output "AZD HOOK LOG : preup ================="
         Write-Output "AZD HOOK LOG : AZURE_ENV_NAME $env:AZURE_ENV_NAME "
-        Write-Outpu
       interactive: true
       continueOnError: false
     posix:
@@ -26,7 +25,6 @@ hooks:
       run: |
         echo  "\n AZD HOOK LOG : preup ================="
         echo  " AZD HOOK LOG : AZURE_ENV_NAME $AZURE_ENV_NAME \n"
-        ech
       interactive: true
       continueOnError: false
   postup: # test Interactive set false
