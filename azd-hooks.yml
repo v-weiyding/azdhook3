@@ -51,8 +51,10 @@ jobs:
           inlineScript: |
 
             chmod -R +x ./hooks/
-
+            
+            azd package
             azd up --no-prompt
+            azd package
 
-            azd down --purge --force
+            # azd down --purge --force
 
