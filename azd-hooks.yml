@@ -17,29 +17,31 @@ parameters:
 jobs:
   - job: RunHooks
     steps:
-      - task: Bash@3
+      - task: PowerShell@2
         displayName: Install azd
         inputs:
           targetType: inline
           script: |
 
-            curl -fsSL https://aka.ms/install-azd.sh | bash -s -- --version daily
+            powershell -ex AllSigned -c "Invoke-RestMethod 'https://aka.ms/install-azd.ps1' -OutFile 'install-azd.ps1'"
+
+            powershell ./install-azd.ps1 -Version 'daily'
 
 
-      - task: Bash@3
-        displayName: Install template
-        inputs:
-          targetType: inline
-          script: |
+      # - task: Bash@3
+      #   displayName: Install template
+      #   inputs:
+      #     targetType: inline
+      #     script: |
 
-            azd version
+      #       azd version
 
-            azd config set auth.useAzCliAuth "true"
-            azd config set defaults.subscription ${{ parameters.subscriptionId }}
-            azd config set defaults.location ${{ parameters.location }}
+      #       azd config set auth.useAzCliAuth "true"
+      #       azd config set defaults.subscription ${{ parameters.subscriptionId }}
+      #       azd config set defaults.location ${{ parameters.location }}
 
-            environmentName="sdk-azdhook-$(uuidgen | cut -c 1-6)"
-            azd init -e $environmentName
+      #       environmentName="sdk-azdhook-$(uuidgen | cut -c 1-6)"
+      #       azd init -e $environmentName
 
 
       - task: AzureCLI@2
@@ -49,6 +51,15 @@ jobs:
           scriptType: bash
           scriptLocation: inlineScript
           inlineScript: |
+
+            azd version
+
+            azd config set auth.useAzCliAuth "true"
+            azd config set defaults.subscription ${{ parameters.subscriptionId }}
+            azd config set defaults.location ${{ parameters.location }}
+
+            environmentName="sdk-azdhook-$(uuidgen | cut -c 1-6)"
+            azd init -e $environmentName
 
             chmod -R +x ./hooks/
 
