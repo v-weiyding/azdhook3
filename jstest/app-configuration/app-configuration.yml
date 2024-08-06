@@ -1,0 +1,125 @@
+name: Run azure-appconfiguration sample
+trigger: none
+
+pool:
+  vmImage: ubuntu-latest
+
+parameters:
+  - name: resourceGroup
+    displayName: Resource Group
+    type: string
+  - name: autoCleanup
+    displayName: Auto cleanup
+    type: boolean
+    default: true
+
+variables:
+  - name: SampleRootPath
+    value: samples
+  - name: codePath
+    value: sdk/eventhub/eventhubs-checkpointstore-blob/samples/v1
+  - name: packageName
+    value: eventhub
+  - name: alphaPackageVersion
+    value: "@azure/eventhubs-checkpointstore-blob@dev"
+
+jobs:
+  - job: RunSamples
+    steps:
+      - task: AzureCLI@2
+        name: CreateResource
+        displayName: Create Resource
+        inputs:
+          azureSubscription: tomServiceConnection1
+          scriptType: bash
+          scriptLocation: inlineScript
+          inlineScript: |
+
+            echo "tom-------------"
+
+      - task: UseNode@1
+        displayName: Setup Node.js
+        inputs:
+          version: "20.x" # string. Version. Default: 10.x.
+
+      - task: Bash@3
+        displayName: Clone samples files
+        inputs:
+          targetType: filePath
+          filePath: azure-sdk-for-js/scripts/sparse-clone-samples.sh
+          arguments: $(codePath)
+
+      - task: Bash@3
+        displayName: Install alpha package
+        inputs:
+          targetType: inline
+          script: |
+
+            npm install -g typescript
+            npm install -g ts-node
+
+
+            pushd $(SampleRootPath)
+            pushd $(codePath)
+            pushd javascript
+
+            npm install $(alphaPackageVersion)
+            npm install
+
+            popd
+
+            pushd typescript
+            npm install $(alphaPackageVersion)
+            npm install
+
+
+      - task: Bash@3
+        displayName: Run js samples
+        # env:
+        #   APPCONFIG_CONNECTION_STRING: $(CreateResource.APPCONFIG_CONNECTION_STRING)
+        #   KEYVAULT_URI: $(CreateResource.KEYVAULT_URI)
+        inputs:
+          targetType: inline
+          script: |
+
+            pushd $(SampleRootPath)
+            pushd $(codePath)
+            pushd javascript
+
+            # replace with ignore code , e.g., aadAuth , proxy
+            ignore_list=(
+              "createCustomPipeline" 
+            )
+
+
+
+            if [ -d "src" ]; then
+              pushd "src"
+            fi
+
+
+            echo "EVENTHUB_NAME=eventhubone" > ".env";
+            echo "EVENTHUB_FQDN=eventhubtc.servicebus.windows.net" >> ".env";
+            echo "EVENTHUB_CONSUMER_GROUP=group" >> ".env";
+            echo "STORAGE_CONTAINER_URL=https://storageaccounttc1.blob.core.windows.net/checkpointstore" >> ".env";
+
+            for file in $(find . -maxdepth 1 -type f \( -name "*.js" -o -name "*.ts" \)); do
+              echo -e "\n\n"
+
+              skip=false
+              for ignore in "${ignore_list[@]}"; do
+                if [[ "$file" == *"$ignore"* ]]; then
+                    skip=true
+                    break
+                fi
+              done
+              if [ "$skip" = true ]; then
+                  echo "Skipping $file Sample =============================="
+                  continue
+              fi
+
+              echo "Running $file Sample: =================================="
+              node "$file"
+
+            done
+

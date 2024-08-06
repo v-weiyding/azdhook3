@@ -1,0 +1,248 @@
+# replace with package name , e.g., storage-queue
+name: Run azure-storage-queue sample
+trigger: none
+
+pool:
+  vmImage: ubuntu-latest
+
+parameters:
+  - name: resourceGroup
+    displayName: Resource Group
+    type: string
+  - name: autoCleanup
+    displayName: Auto cleanup
+    type: boolean
+    default: true
+
+variables:
+  - name: SampleRootPath
+    value: samples
+    # replace with code github path , e.g., sdk/storage/storage-queue/samples/v12
+  - name: codePath
+    value: sdk/storage/storage-queue/samples/v12
+    # replace with package name , e.g., storage : <= 10  characters
+  - name: packageName
+    value: storage
+    # replace with package name , e.g., storage-queue
+  - name: alphaPackageVersion
+    value: "@azure/storage-queue@dev"
+
+jobs:
+  - job: RunSamples
+    steps:
+      # replace with resource to be created
+      - task: AzureCLI@2
+        name: CreateResource
+        displayName: Create Resource
+        inputs:
+          azureSubscription: test-connection
+          scriptType: bash
+          scriptLocation: inlineScript
+          inlineScript: |
+
+            #JS
+            # resourceName ACCOUNT_NAME
+            resourceName4JS="sdk$(packageName)$(uuidgen | cut -c 1-6)"
+            echo "Generated resourceName4JS: $resourceName4JS"
+            echo "##vso[task.setvariable variable=resourceName4JS;isOutput=true]$resourceName4JS"
+
+
+
+            az storage account create -g ${{ parameters.resourceGroup }} -n $resourceName4JS -l westus
+            # STORAGE_CONNECTION_STRING
+            STORAGE_CONNECTION_STRING_JS=$(az storage account show-connection-string --name $resourceName4JS --resource-group ${{ parameters.resourceGroup }} --query connectionString -o tsv)
+            # ACCOUNT_KEY
+            ACCOUNT_KEY_JS=$(az storage account keys list --account-name $resourceName4JS --resource-group ${{ parameters.resourceGroup }} --query [0].value --output tsv)  
+            # blobEndpoint=$(az storage account show --name $resourceName4JS --resource-group ${{ parameters.resourceGroup }} --query primaryEndpoints.blob --output tsv)
+            endtime=`date -u -d "30 minutes" '+%Y-%m-%dT%H:%MZ'`
+            sasToken=$(az storage account generate-sas --permissions acdfilprtuwxy --account-name $resourceName4JS --services bfqt --resource-types sco --expiry $endtime --account-key $ACCOUNT_KEY_JS -o tsv)
+            # ACCOUNT_SAS
+            ACCOUNT_SAS_JS=/?$sasToken
+
+            echo "##vso[task.setvariable variable=ACCOUNT_NAME_JS;isOutput=true]$resourceName4JS"
+            echo "##vso[task.setvariable variable=STORAGE_CONNECTION_STRING_JS;isOutput=true]$STORAGE_CONNECTION_STRING_JS"
+            echo "##vso[task.setvariable variable=ACCOUNT_KEY_JS;isOutput=true]$ACCOUNT_KEY_JS"
+            echo "##vso[task.setvariable variable=ACCOUNT_SAS_JS;isOutput=true]$ACCOUNT_SAS_JS"
+
+
+
+            # TS
+            # resourceName ACCOUNT_NAME
+            resourceName4TS="sdk$(packageName)$(uuidgen | cut -c 1-6)"
+            echo "Generated resourceName4TS: $resourceName4TS"
+            echo "##vso[task.setvariable variable=resourceName4TS;isOutput=true]$resourceName4TS"
+
+
+
+            az storage account create -g ${{ parameters.resourceGroup }} -n $resourceName4TS -l westus
+            # STORAGE_CONNECTION_STRING
+            STORAGE_CONNECTION_STRING_TS=$(az storage account show-connection-string --name $resourceName4TS --resource-group ${{ parameters.resourceGroup }} --query connectionString -o tsv)
+            # ACCOUNT_KEY
+            ACCOUNT_KEY_TS=$(az storage account keys list --account-name $resourceName4TS --resource-group ${{ parameters.resourceGroup }} --query [0].value --output tsv)  
+            # blobEndpoint=$(az storage account show --name $resourceName4TS --resource-group ${{ parameters.resourceGroup }} --query primaryEndpoints.blob --output tsv)
+            endtime=`date -u -d "30 minutes" '+%Y-%m-%dT%H:%MZ'`
+            sasToken=$(az storage account generate-sas --permissions acdfilprtuwxy --account-name $resourceName4TS --services bfqt --resource-types sco --expiry $endtime --account-key $ACCOUNT_KEY_TS -o tsv)
+            # ACCOUNT_SAS
+            ACCOUNT_SAS_TS=/?$sasToken
+
+            echo "##vso[task.setvariable variable=ACCOUNT_NAME_TS;isOutput=true]$resourceName4TS"
+            echo "##vso[task.setvariable variable=STORAGE_CONNECTION_STRING_TS;isOutput=true]$STORAGE_CONNECTION_STRING_TS"
+            echo "##vso[task.setvariable variable=ACCOUNT_KEY_TS;isOutput=true]$ACCOUNT_KEY_TS"
+            echo "##vso[task.setvariable variable=ACCOUNT_SAS_TS;isOutput=true]$ACCOUNT_SAS_TS"
+
+      - task: UseNode@1
+        displayName: Setup Node.js
+        inputs:
+          version: "20.x" # string. Version. Default: 10.x.
+
+      - task: Bash@3
+        displayName: Clone samples files
+        inputs:
+          targetType: filePath
+          filePath: azure-sdk-for-js/scripts/sparse-clone-samples.sh
+          arguments: $(codePath)
+
+      - task: Bash@3
+        displayName: Install alpha package
+        inputs:
+          targetType: inline
+          script: |
+
+            npm install -g typescript
+            npm install -g ts-node
+
+
+            pushd $(SampleRootPath)
+            pushd $(codePath)
+            pushd javascript
+
+            npm install $(alphaPackageVersion)
+            npm install
+
+            popd
+
+            pushd typescript
+            npm install $(alphaPackageVersion)
+            npm install
+
+
+      - task: Bash@3
+        displayName: Run js samples
+        inputs:
+          targetType: inline
+          script: |
+
+            pushd $(SampleRootPath)
+            pushd $(codePath)
+            pushd javascript
+
+            # replace with ignore code , e.g., aadAuth , proxy
+            ignore_list=(
+              "proxyAuth" 
+              "azureAdAuth" 
+            )
+
+
+            if [ -d "src" ]; then
+              pushd "src"
+            fi
+
+
+            # replace with environment variables , e.g., KEYVAULT_URI=$(KEYVAULT_URI)
+            echo "ACCOUNT_NAME=$(CreateResource.ACCOUNT_NAME_JS)" > ".env";
+            echo "STORAGE_CONNECTION_STRING=$(CreateResource.STORAGE_CONNECTION_STRING_JS)" >> ".env";
+            echo "ACCOUNT_KEY=$(CreateResource.ACCOUNT_KEY_JS)" >> ".env";
+            echo "ACCOUNT_SAS=$(CreateResource.ACCOUNT_SAS_JS)" >> ".env";
+
+
+            for file in $(find . -maxdepth 1 -type f \( -name "*.js" -o -name "*.ts" \)); do
+              echo -e "\n\n"
+
+              skip=false
+              for ignore in "${ignore_list[@]}"; do
+                if [[ "$file" == *"$ignore"* ]]; then
+                    skip=true
+                    break
+                fi
+              done
+              if [ "$skip" = true ]; then
+                  echo "Skipping $file Sample =============================="
+                  continue
+              fi
+
+              echo "Running $file Sample: =================================="
+              node "$file"
+
+            done
+
+
+      - task: Bash@3
+        displayName: Run ts samples
+        inputs:
+          targetType: inline
+          script: |
+
+            pushd $(SampleRootPath)
+            pushd $(codePath)
+            pushd typescript
+
+            # replace with ignore code , e.g., aadAuth , proxy
+            ignore_list=(
+              "proxyAuth" 
+              "azureAdAuth" 
+            )
+
+
+            if [ -d "src" ]; then
+              pushd "src"
+            fi
+
+
+            # replace with environment variables , e.g., KEYVAULT_URI=$(KEYVAULT_URI)
+            echo "ACCOUNT_NAME=$(CreateResource.ACCOUNT_NAME_TS)" > ".env";
+            echo "STORAGE_CONNECTION_STRING=$(CreateResource.STORAGE_CONNECTION_STRING_TS)" >> ".env";
+            echo "ACCOUNT_KEY=$(CreateResource.ACCOUNT_KEY_TS)" >> ".env";
+            echo "ACCOUNT_SAS=$(CreateResource.ACCOUNT_SAS_TS)" >> ".env";
+
+            # cat ".env"
+
+            for file in $(find . -maxdepth 1 -type f \( -name "*.js" -o -name "*.ts" \)); do
+              echo -e "\n\n"
+
+              skip=false
+              for ignore in "${ignore_list[@]}"; do
+                if [[ "$file" == *"$ignore"* ]]; then
+                    skip=true
+                    break
+                fi
+              done
+              if [ "$skip" = true ]; then
+                  echo "Skipping $file Sample =============================="
+                  continue
+              fi
+
+              echo "Running $file Sample: =================================="
+              ts-node "$file"
+
+            done
+
+
+      # replace with resources to be deleted
+      - task: AzureCLI@2
+        condition: eq('${{ parameters.AutoCleanup }}', true)
+        displayName: Delete all resource
+        inputs:
+          azureSubscription: test-connection
+          scriptType: bash
+          scriptLocation: inlineScript
+          inlineScript: |
+
+            # JS
+            echo "Deleting storage account :$(CreateResource.resourceName4JS)"
+            az storage account delete -g ${{ parameters.resourceGroup }} -n $(CreateResource.resourceName4JS) --yes
+            # echo "Didn't purge $(CreateResource.resourceName4JS). Azure scheduled to purge it in 7 days."
+
+            # TS
+            echo "Deleting storage account :$(CreateResource.resourceName4TS)"
+            az storage account delete -g ${{ parameters.resourceGroup }} -n $(CreateResource.resourceName4TS) --yes
+            # echo "Didn't purge $(CreateResource.resourceName4TS). Azure scheduled to purge it in 7 days."
