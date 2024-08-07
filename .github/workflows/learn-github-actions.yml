@@ -1,10 +1,10 @@
 on:
   workflow_dispatch:
-    inputs:
-        location:
-          description: 'azure location'
-          required: true
-          default: 'eastus2'
+    # inputs:
+    #     location:
+    #       description: 'azure location'
+    #       required: true
+    #       default: 'eastus2'
   push:
     branches:
       - main
@@ -26,7 +26,6 @@ jobs:
       AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
       AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
       AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-      AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -51,12 +50,9 @@ jobs:
         run: |
 
           azd version
-          echo ${{ env.AZURE_SUBSCRIPTION_ID }}
-          echo ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          echo ${{ vars.AZURE_LOCATION }}
           
           azd config set defaults.subscription ${{ env.AZURE_SUBSCRIPTION_ID }}
-          azd config set defaults.location ${{ env.AZURE_LOCATION }}
+          azd config set defaults.location eastus2
 
           environmentName="sdk-azdhook-$(uuidgen | cut -c 1-6)"
           azd init -e $environmentName
