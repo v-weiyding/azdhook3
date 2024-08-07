@@ -8,7 +8,7 @@ on:
   push:
     branches:
       - main
-      - master
+      - dev
 
 # GitHub Actions workflow to deploy to Azure using azd
 # To configure required secrets for connecting to Azure, simply run `azd pipeline config`
@@ -51,7 +51,10 @@ jobs:
         run: |
 
           azd version
-          # azd config set auth.useAzCliAuth "true"
+          echo ${{ env.AZURE_SUBSCRIPTION_ID }}
+          echo ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          echo ${{ vars.AZURE_LOCATION }}
+          
           azd config set defaults.subscription ${{ env.AZURE_SUBSCRIPTION_ID }}
           azd config set defaults.location ${{ env.AZURE_LOCATION }}
 
