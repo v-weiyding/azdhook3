@@ -1,0 +1,79 @@
+on:
+  workflow_dispatch:
+    inputs:
+        location:
+          description: 'azure location'
+          required: true
+          default: 'eastus2'
+  push:
+    branches:
+      - main
+      - master
+
+# GitHub Actions workflow to deploy to Azure using azd
+# To configure required secrets for connecting to Azure, simply run `azd pipeline config`
+
+# Set up permissions for deploying with secretless Azure federated credentials
+# https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure?tabs=azure-portal%2Clinux#set-up-azure-login-with-openid-connect-authentication
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  RunHooks:
+    runs-on: ubuntu-latest
+    env:
+      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # - name: Install azd
+      #   uses: Azure/setup-azd@v1.0.0
+      - name: Install azd
+        run: |
+          curl -fsSL https://aka.ms/install-azd.sh | bash -s -- --version daily  
+        
+
+      - name: Log in with Azure (Federated Credentials)
+        if: ${{ env.AZURE_CLIENT_ID != '' }}
+        run: |
+          azd auth login `
+            --client-id "$Env:AZURE_CLIENT_ID" `
+            --federated-credential-provider "github" `
+            --tenant-id "$Env:AZURE_TENANT_ID"
+        shell: pwsh
+
+      - name: Configure template
+        run: |
+
+          azd version
+          # azd config set auth.useAzCliAuth "true"
+          azd config set defaults.subscription ${{ env.AZURE_SUBSCRIPTION_ID }}
+          azd config set defaults.location ${{ env.AZURE_LOCATION }}
+
+          environmentName="sdk-azdhook-$(uuidgen | cut -c 1-6)"
+          azd init -e $environmentName
+
+
+      # - name: Provision Infrastructure
+      #   run: azd provision --no-prompt
+      #   env:
+      #     AZD_INITIAL_ENVIRONMENT_CONFIG: ${{ secrets.AZD_INITIAL_ENVIRONMENT_CONFIG }}
+
+      # - name: Deploy Application
+      #   run: azd deploy --no-prompt
+
+      - name: Run azd hooks
+        run: |
+        
+            set -e
+            
+            chmod -R +x ./hooks/
+
+            azd up --no-prompt
+
+            azd down --purge --force
