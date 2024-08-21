@@ -41,6 +41,15 @@ jobs:
             environmentName="sdk-azdhook-$(uuidgen | cut -c 1-6)"
             azd init -e $environmentName
 
+      - task: Bash@3
+        displayName: Show version
+        inputs:
+          targetType: inline
+          script: |
+
+            azd version
+
+
 
       - task: AzureCLI@2
         displayName: Run azd hooks
