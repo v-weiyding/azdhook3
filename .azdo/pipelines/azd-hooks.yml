@@ -41,7 +41,7 @@ jobs:
             azd config set defaults.subscription ${{ parameters.subscriptionId }}
             azd config set defaults.location ${{ parameters.location }}
 
-            environmentName="sdk-azdhook-$(uuidgen | cut -c 1-6)"
+            environmentName="sdkazdhook$(uuidgen | cut -c 1-6)"
             azd init -e $environmentName
 
       - task: Bash@3
