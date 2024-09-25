@@ -125,7 +125,6 @@ hooks:
     posix:
       shell: sh
       run: ./hooks/localFile.sh postdeploy
-
       interactive: true
       continueOnError: false
 

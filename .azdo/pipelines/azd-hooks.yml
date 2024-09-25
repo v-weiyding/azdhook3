@@ -1,5 +1,8 @@
 name: Run azd hooks
-trigger: none
+trigger: 
+  branches:
+    include:
+      - main
 
 pool:
   vmImage: ubuntu-latest

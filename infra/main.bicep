@@ -11,6 +11,16 @@ param location string
 
 
 resource rg 'Microsoft.Resources/resourceGroups@2021-04-01' = {
+  
   name: 'rg-${environmentName}'
   location: location
+}
+
+// Store secrets in a keyvault
+module storageAccount './storage-account.bicep' = {
+  name: 'storageAccount'
+  scope: rg
+  params: {
+    name:'tomstorage'
+  }
 }
